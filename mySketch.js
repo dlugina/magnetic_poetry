@@ -1,8 +1,3 @@
-//magnetArray[i].X-(magnetArray[i].width/2), magnetArray[i].Y -32 top left
-//magnetArray[i].X-(magnetArray[i].width/2), magnetArray[i].Y +12 bottom left
-//magnetArray[i].X+(magnetArray[i].width/2), magnetArray[i].Y -32 top right
-//magnetArray[i].X+(magnetArray[i].width/2), magnetArray[i].Y +12 bottom right
-
 let magnet = {
   text: '',
   X: 0,
@@ -25,26 +20,43 @@ function setup() {
   button.mousePressed(generateMagnet);
 }
 
+function keyPressed() {
+  if (keyCode === ENTER && input.value()!='') {
+		generateMagnet();
+	}
+}
+
 function generateMagnet(){
-	const name = input.value();
-	let newMagnet = Object.create(magnet);
-	newMagnet.text=input.value();
-	newMagnet.X=random(windowWidth);
-	newMagnet.Y=random(windowHeight);
-	newMagnet.width=input.value().length*25;
-	magnetArray.push(newMagnet);
+	if (input.value()!=''){
+		let newMagnet = Object.create(magnet);
+		newMagnet.text=input.value();
+		newMagnet.X=random(windowWidth-200)+100;
+		newMagnet.Y=random(windowHeight-200)+100;
+		newMagnet.width=input.value().length*25;
+		magnetArray.push(newMagnet);
+	}
+	input.value('');
 }
 
 function draw() {
+	
+	textAlign(CENTER);
+	fill(255,255,255);
+	strokeWeight(2);
+	rect(windowWidth-150, windowHeight-100,100,50);
+	fill(0,0,0);
+	textSize(25);
+	strokeWeight(0);
+  text("TRASH", windowWidth-100, windowHeight-67);
+	
 	for(let i = 0; i < magnetArray.length; i++){	
 		strokeWeight(2);
 		fill(255,255,255);
 		stroke(0,0,0);
 		rect(magnetArray[i].X-(magnetArray[i].width/2), magnetArray[i].Y -32, magnetArray[i].width, 44);
-		fill(0);
 		strokeWeight(0);
+		fill(0,0,0);
 		textSize(32);
-		textAlign(CENTER);
 		text(magnetArray[i].text,magnetArray[i].X, magnetArray[i].Y);
 	}
 }
@@ -72,6 +84,12 @@ function mouseDragged() {
 
 function mouseReleased(){
 	if (magnetSelected){
+		if(mouseX> windowWidth-150 && windowWidth-50){
+				if(mouseY > windowHeight-100 && mouseY < windowHeight-50){
+					magnetArray.splice(magnetMoving,1);
+					clear();
+				}
+		}
 		magnetSelected = false;
 	}
 }
