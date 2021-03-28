@@ -7,42 +7,56 @@ let magnet = {
 
 let magnetArray=[];
 let magnetSelected = false;
+let magnetMovingObject;
 let magnetMoving = 0;
 
 function setup() {
 	createCanvas(windowWidth, windowHeight);
 	
-	input = createInput();
-  input.position(10, 10);
+	inputAdd = createInput();
+  inputAdd.position(10, 10);
+	
+	inputSearch = createInput();
+	inputSearch.position(10,40);
+	
+	buttonSearch = createButton('search');
+	buttonSearch.position(inputSearch.x + 10 + inputSearch.width, 40);
+	buttonSearch.mousePressed(search);
 	
 	buttonClear = createButton('clear all');
 	buttonClear.position(240, 10);
 	buttonClear.mousePressed(clearBoard);
 	
-	button = createButton('add word');
-  button.position(input.x + 10 + input.width, 10);
-  button.mousePressed(generateMagnet);
+	buttonAdd = createButton('add word');
+  buttonAdd.position(inputAdd.x + 10 + inputAdd.width, 10);
+  buttonAdd.mousePressed(generateMagnet);
 }
 
 function keyPressed() {
-	if (input.value()==" "){
-		input.value('');
+	if (inputAdd.value()==" "){
+		inputAdd.value('');
 	}
-	if ((keyCode === ENTER || keyCode === 32) && input.value()!='' && input.value()!=' ') {
-		generateMagnet();
-	} 
+	if ((keyCode === ENTER || keyCode === 32) && inputAdd.value()!='') {
+		 generateMagnet();
+	}
+	if (inputSearch.value()==" "){
+		inputSearch.value('');
+	}
+	if (keyCode === ENTER && inputSearch.value()!='') {
+			search();
+	}
 }
 
 function generateMagnet(){
-	if (input.value()!=''){
+	if (inputAdd.value()!=''){
 		let newMagnet = Object.create(magnet);
-		newMagnet.text=input.value();
+		newMagnet.text=inputAdd.value();
 		newMagnet.X=random(windowWidth-200)+100;
 		newMagnet.Y=random(windowHeight-200)+100;
-		newMagnet.width=input.value().length*25;
+		newMagnet.width=inputAdd.value().length*25;
 		magnetArray.push(newMagnet);
 	}
-	input.value('');
+	inputAdd.value('');
 }
 
 function draw() {
@@ -73,7 +87,10 @@ function mousePressed(){
 			if(mouseX> magnetArray[i].X-(magnetArray[i].width/2) && mouseX<magnetArray[i].X+(magnetArray[i].width/2)){
 				if(mouseY > magnetArray[i].Y -32 && mouseY < magnetArray[i].Y +12){
 					magnetSelected = true;
-					magnetMoving = i;
+					magnetMovingObject = magnetArray[i];
+					magnetArray.splice(i,1);
+					magnetArray.push(magnetMovingObject);
+					magnetMoving = magnetArray.length-1;
 					break;
 				}
 			}
@@ -106,11 +123,32 @@ function clearBoard(){
 	clear();
 }
 
-function clearBoard(){
-	magnetArray=[];
-	clear();
+function windowResized() {
+	for(let i = 0; i < magnetArray.length; i++){	
+		if(magnetArray[i].X>windowWidth){
+			magnetArray[i].X=windowWidth;
+		}
+		if(magnetArray[i].Y>windowHeight){
+			magnetArray[i].Y=windowHeight;
+		}
+	}
+	resizeCanvas(windowWidth, windowHeight);
+  clear();
 }
 
-function windowResized() {
-  clear();
+function search(){
+	inputSearch.value(inputSearch.value().replace(/\s+/g, ''));
+	for(let i = 0; i < magnetArray.length; i++){	
+		if(magnetArray[i].text==inputSearch.value()){
+			magnetMovingObject = magnetArray[i];
+			magnetArray.splice(i,1);
+			magnetArray.push(magnetMovingObject);
+			magnetArray[magnetArray.length-1].X=10+magnetArray[magnetArray.length-1].width/2;
+			magnetArray[magnetArray.length-1].Y=100;
+			clear();
+			break;
+		}
+	}
+	print("Sorry! There is no magnet like that.")
+	inputSearch.value('');
 }
