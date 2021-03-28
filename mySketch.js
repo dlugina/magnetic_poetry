@@ -167,8 +167,10 @@ function search(){
 				clear();
 				break;
 			}
+			if (i==magnetArray.length-1){
+					alert("Sorry! There is no magnet like that.")
+			}
 		}
-		alert("Sorry! There is no magnet like that.")
 		inputSearch.value('');
 	}
 }
