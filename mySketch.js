@@ -105,3 +105,12 @@ function clearBoard(){
 	magnetArray=[];
 	clear();
 }
+
+function clearBoard(){
+	magnetArray=[];
+	clear();
+}
+
+function windowResized() {
+  clear();
+}
