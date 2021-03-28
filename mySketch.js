@@ -15,15 +15,22 @@ function setup() {
 	input = createInput();
   input.position(10, 10);
 	
+	buttonClear = createButton('clear all');
+	buttonClear.position(240, 10);
+	buttonClear.mousePressed(clearBoard);
+	
 	button = createButton('add word');
   button.position(input.x + 10 + input.width, 10);
   button.mousePressed(generateMagnet);
 }
 
 function keyPressed() {
-  if (keyCode === ENTER && input.value()!='') {
-		generateMagnet();
+	if (input.value()==" "){
+		input.value('');
 	}
+	if ((keyCode === ENTER || keyCode === 32) && input.value()!='' && input.value()!=' ') {
+		generateMagnet();
+	} 
 }
 
 function generateMagnet(){
@@ -92,4 +99,9 @@ function mouseReleased(){
 		}
 		magnetSelected = false;
 	}
+}
+
+function clearBoard(){
+	magnetArray=[];
+	clear();
 }
